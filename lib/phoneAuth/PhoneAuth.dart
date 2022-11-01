@@ -5,27 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:flutter_auth_app/common.dart';
 
-class RegisterPage extends StatefulWidget {
-  final VoidCallback toggles;
-
-  const RegisterPage({super.key, required this.toggles});
+class PhonePage extends StatefulWidget {
+  const PhonePage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<PhonePage> createState() => _PhonePageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _PhonePageState extends State<PhonePage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
-  final _passController = TextEditingController();
+  final _phonenumController = TextEditingController();
+  final _codeController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passController.dispose();
+    _phonenumController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -43,21 +41,19 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               children: [
                 Text(
-                  'Register',
+                  'Phone Verif',
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
                   height: 120,
                 ),
                 TextFormField(
-                  controller: _emailController,
-                  decoration: textFieldDeco('Email'),
+                  keyboardType: TextInputType.phone,
+                  controller: _phonenumController,
+                  decoration: textFieldDeco('Phone Numer'),
                   validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        !value.contains('@') ||
-                        value.length < 7) {
-                      return 'Please enter some text';
+                    if (value == null) {
+                      return 'Please enter number';
                     }
                     return null;
                   },
@@ -66,36 +62,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 20,
                 ),
                 TextFormField(
-                  controller: _passController,
-                  decoration: textFieldDeco('Password'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty || value.length < 6) {
-                      return 'Please enter valid password';
-                    }
-                    return null;
-                  },
+                   keyboardType: TextInputType.number,
+                  controller: _codeController,
+                  decoration: textFieldDeco('Code'),
+                  validator: (value) {},
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 CupertinoButton(
                   color: Colors.blueGrey,
-                  onPressed: () async {
+                  onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
-                      final _status = _authService.createAccountwEmailandPass(context,
-                          _emailController.text.trim(),
-                          _passController.text.trim(),
-                          );
-
-                     
+                      _authService.verifyPhoneNum(
+                          context, _phonenumController.text.trim());
                     }
                   },
-                  child: const Text('Register'),
+                  child: const Text('Send Code'),
                 ),
+                SizedBox(height: 10,),
                 CupertinoButton(
-                  onPressed: widget.toggles,
-                  child: const Text('Login'),
+                  color: Colors.blueGrey,
+                  onPressed: () {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_formKey.currentState!.validate()) {
+                      _authService
+                          .verifyCodeSentToPhone(_codeController.text.trim());
+                    }
+                  },
+                  child: const Text('Verify Code'),
                 ),
               ],
             ),
@@ -104,6 +100,4 @@ class _RegisterPageState extends State<RegisterPage> {
       )),
     );
   }
-
-  
 }

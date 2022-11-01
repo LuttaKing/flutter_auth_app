@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:flutter_auth_app/common.dart';
 
 class ChangePass extends StatefulWidget {
@@ -16,6 +17,9 @@ class _ChangePassState extends State<ChangePass> {
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
+
+    final AuthService _authService = AuthService();
+
 
   @override
   void dispose() {
@@ -57,8 +61,6 @@ class _ChangePassState extends State<ChangePass> {
                     return null;
                   },
                 ),
-               
-                
                 SizedBox(
                   height: 20,
                 ),
@@ -67,14 +69,16 @@ class _ChangePassState extends State<ChangePass> {
                   onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
-                      // If the form is valid,
+                    
+                    final _status = _authService.resetPasswordwEmailLink(
+                          context,_emailController.text.trim(),
+                          );
+
                       
-                      passreset();
                     }
                   },
                   child: const Text('Reset'),
                 ),
-                
               ],
             ),
           ),
@@ -83,18 +87,5 @@ class _ChangePassState extends State<ChangePass> {
     );
   }
 
-  Future passreset() async {
-   
-
-      try {
-         await FirebaseAuth.instance.sendPasswordResetEmail(
-      email: _emailController.text.trim());
-      showSnackx(context, 'Link sent, check even spam');
-        
-      } on FirebaseAuthException catch (e) {
-
-        showSnackx(context, e.message.toString());
-        
-      }
-  }
+ 
 }

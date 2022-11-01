@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_app/ChangePass.dart';
+import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:flutter_auth_app/common.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
 
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
+
+  final AuthService _authService = AuthService();
 
   @override
   void dispose() {
@@ -73,13 +75,15 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 5,),
-                 CupertinoButton(
+                SizedBox(
+                  height: 5,
+                ),
+                CupertinoButton(
                   onPressed: () {
                     Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) =>  ChangePass()),
-  );
+                      context,
+                      MaterialPageRoute(builder: (context) => ChangePass()),
+                    );
                   },
                   child: const Text('Forgot Pass'),
                 ),
@@ -91,15 +95,15 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
-                      // If the form is valid,
-                      showSnackx(context, 'message');
-                      signIn();
+                      final _status = _authService.signinwEmailandPass(
+                          context,_emailController.text.trim(),
+                          _passController.text.trim(),);
                     }
                   },
                   child: const Text('Login'),
                 ),
                 CupertinoButton(
-                  onPressed:widget.toggles,
+                  onPressed: widget.toggles,
                   child: const Text('Register'),
                 ),
               ],
@@ -108,11 +112,5 @@ class _LoginPageState extends State<LoginPage> {
         )),
       )),
     );
-  }
-
-  Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passController.text.trim());
   }
 }

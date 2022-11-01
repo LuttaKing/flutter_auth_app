@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:flutter_auth_app/common.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,13 +14,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
 
+  final AuthService _authService = AuthService();
+
   @override
   void initState() {
     if (user!.emailVerified) {
       print('Verified');
     } else {
-      user!.sendEmailVerification();
-            print('Not Verified,Email Sent');
+      //  user!.sendEmailVerification();
+      print('Not Verified,Email Sent');
     }
 
     super.initState();
@@ -41,13 +44,11 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 20,
               ),
-              
               CupertinoButton(
                 color: Colors.blueGrey,
                 onPressed: () {
                   // If the form is valid,
-                  showSnackx(context, 'message');
-                  signOut();
+                  _authService.signOut();
                 },
                 child: const Text('Logout'),
               ),
@@ -56,9 +57,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  Future signOut() async {
-    await FirebaseAuth.instance.signOut();
   }
 }
