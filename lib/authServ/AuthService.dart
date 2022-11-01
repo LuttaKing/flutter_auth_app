@@ -52,7 +52,7 @@ class AuthService {
     }
   }
 
-  late String verificationID;
+  late String _verificationID;
   Future verifyPhoneNum(BuildContext context, String phoneNum) async {
     try {
       await _auth.verifyPhoneNumber(
@@ -62,24 +62,22 @@ class AuthService {
           print('auto verif completed');
          // print(phoneAuthCredential.smsCode);
           showSnackx(context, phoneAuthCredential.toString());
-          UserCredential user =
-              await _auth.signInWithCredential(phoneAuthCredential);
+          UserCredential user = await _auth.signInWithCredential(phoneAuthCredential);
           print(user);
         },
         verificationFailed: ((error) {
-          print('verif failed: $error');
-          showSnackx(context, error.toString());
+          
+          showSnackx(context, 'VERIF FAILED $error');
         }),
         codeSent: (verificationId, forceResendingToken) {
-          print('CODE SENT');
+          
           showSnackx(context, 'CODE SENT');
-          verificationID = verificationId;
-          print('Verif ID: $verificationID');
+          _verificationID = verificationId;
         },
         codeAutoRetrievalTimeout: (verificationId) {
-          print('codeAutoRetrievalTimeout');
+          
           showSnackx(context, 'codeAutoRetrievalTimeout');
-          verificationID = verificationId;
+          _verificationID = verificationId;
         },
       );
     } on FirebaseAuthException catch (e) {
@@ -88,13 +86,14 @@ class AuthService {
   }
 
   Future verifyCodeSentToPhone(String smscode) async {
-    print('Verif ID found is $verificationID');
+    
     UserCredential user = await _auth.signInWithCredential(
       PhoneAuthProvider.credential(
-          verificationId: verificationID, smsCode: smscode),
+          verificationId: _verificationID, smsCode: smscode),
     );
 
     print(user);
+    
   }
 
   Future<void> signOut() async {
