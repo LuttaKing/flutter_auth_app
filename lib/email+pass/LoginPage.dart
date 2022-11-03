@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_app/ChangePass.dart';
+import 'package:flutter_auth_app/email+pass/ChangePass.dart';
 import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:flutter_auth_app/common.dart';
 

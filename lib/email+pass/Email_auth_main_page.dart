@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_app/HomePage.dart';
-import 'package:flutter_auth_app/LoginPage.dart';
-import 'package:flutter_auth_app/RegisterPage.dart';
+import 'package:flutter_auth_app/email+pass/LoginPage.dart';
+import 'package:flutter_auth_app/email+pass/RegisterPage.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class EmailPasswordAuthPage extends StatefulWidget {
+  const EmailPasswordAuthPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<EmailPasswordAuthPage> createState() => _EmailPasswordAuthPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _EmailPasswordAuthPageState extends State<EmailPasswordAuthPage> {
   bool showLogin = true;
 
   void toggleScreens() {

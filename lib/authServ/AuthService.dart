@@ -60,22 +60,20 @@ class AuthService {
         timeout: const Duration(seconds: 60),
         verificationCompleted: (phoneAuthCredential) async {
           print('auto verif completed');
-         // print(phoneAuthCredential.smsCode);
+          // print(phoneAuthCredential.smsCode);
           showSnackx(context, phoneAuthCredential.toString());
-          UserCredential user = await _auth.signInWithCredential(phoneAuthCredential);
+          UserCredential user =
+              await _auth.signInWithCredential(phoneAuthCredential);
           print(user);
         },
         verificationFailed: ((error) {
-          
           showSnackx(context, 'VERIF FAILED $error');
         }),
         codeSent: (verificationId, forceResendingToken) {
-          
           showSnackx(context, 'CODE SENT');
           _verificationID = verificationId;
         },
         codeAutoRetrievalTimeout: (verificationId) {
-          
           showSnackx(context, 'codeAutoRetrievalTimeout');
           _verificationID = verificationId;
         },
@@ -86,14 +84,57 @@ class AuthService {
   }
 
   Future verifyCodeSentToPhone(String smscode) async {
-    
     UserCredential user = await _auth.signInWithCredential(
       PhoneAuthProvider.credential(
           verificationId: _verificationID, smsCode: smscode),
     );
 
     print(user);
-    
+  }
+
+  var acodeSettin = ActionCodeSettings(
+    // URL you want to redirect back to. The domain (www.example.com) for this
+    // URL must be whitelisted in the Firebase Console.
+    url: 'https://saymynameinj.page.link',
+
+    handleCodeInApp: true,
+    iOSBundleId: 'com.example.flutterAuthApp',
+    androidPackageName: 'com.example.flutter_auth_app',
+
+    androidInstallApp: true,
+    androidMinimumVersion: '12',
+    dynamicLinkDomain: 'saymynameinj.page.link',
+  );
+
+  Future sendMagicLink(BuildContext context, String email) async {
+    print('Magic Link');
+    try {
+      await _auth.sendSignInLinkToEmail(
+          email: email, actionCodeSettings: acodeSettin);
+      print('email sent');
+      showSnackx(context, 'Email sent');
+    } catch (e) {
+      print(e);
+      showSnackx(context, e.toString());
+    }
+  }
+
+  Future signInwMagicLink(String incomingLink, String email) async {
+    // Confirm the link is a sign-in with email link.
+    if (_auth.isSignInWithEmailLink(incomingLink)) {
+      try {
+        // The client SDK will parse the code from the link for you.
+        final userCredential = await _auth.signInWithEmailLink(email: email, emailLink: incomingLink);
+
+        // You can access the new user via userCredential.user.
+        
+        print(userCredential.user?.email);
+
+        print('Successfully signed in with email link!');
+      } catch (error) {
+        print(error.toString());
+      }
+    }
   }
 
   Future<void> signOut() async {

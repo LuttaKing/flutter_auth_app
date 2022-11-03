@@ -1,13 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_app/main_page.dart';
+import 'package:flutter_auth_app/PickAuthMethodPage.dart';
+import 'package:flutter_auth_app/authServ/AuthService.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_auth_app/phoneAuth/PhoneAuth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+    
+
 
   await Firebase.initializeApp();
+
+   print('===========86767==========');
+
+    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      final AuthService _authService = AuthService();
+      print('==========================');
+      print(dynamicLinkData.link);
+      _authService.signInwMagicLink(dynamicLinkData.link.toString(), '111mullerfred11@gmail.com');
+    }).onError((error) {
+      print('X==========================');
+      print(error);
+    });
   runApp(const MyApp());
 }
 
@@ -19,8 +34,8 @@ class MyApp extends StatelessWidget {
   
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-     // home: MainPage(),
-     home: PhonePage(),
+      home: PickAuthMethod(),
+    // home: PhonePage(),
     );
   }
 }
